@@ -2,17 +2,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
     const body = document.body;
+    const links = document.querySelectorAll('.nav-links a');
 
+    // Toggle mobile nav on hamburger click
     menuToggle.addEventListener('click', () => {
         menuToggle.classList.toggle('active');
         navLinks.classList.toggle('show');
         body.classList.toggle('nav-open');
     });
 
+    // Handle nav link clicks to close navbar and scroll
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default anchor behavior
+            const targetId = link.getAttribute('href');
+
+            // Close the navbar if it’s open (mobile)
+            if (navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                menuToggle.classList.remove('active');
+                body.classList.remove('nav-open');
+            }
+
+            // Scroll to target section
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                const headerHeight = document.querySelector('.header').offsetHeight;
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20; // 20px gap
+
+                // Instant scroll on mobile, smooth on desktop
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: window.innerWidth <= 768 ? 'auto' : 'smooth'
+                });
+            }
+        });
+    });
+
+    // Update active link on scroll
     const sections = document.querySelectorAll('section[id]');
-    const links = document.querySelectorAll('.nav-links a');
     window.addEventListener('scroll', () => {
-        const scrollPosition = window.scrollY + 70;
+        const scrollPosition = window.scrollY + 90; // Matches padding-top
         sections.forEach(section => {
             const top = section.offsetTop;
             const height = section.offsetHeight;
@@ -26,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Fade-in animation observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
