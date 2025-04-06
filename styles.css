@@ -1007,6 +1007,16 @@ html, body {
 
 }
 
+.header {
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    height: 70px; /* Explicit height */
+}
+
+/* Section offset for scroll */
 section[id] {
-  scroll-margin-top: 50px;
+    scroll-margin-top: 90px; /* Increased to match header height + gap (70px + 20px) */
 }

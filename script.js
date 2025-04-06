@@ -27,14 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
             // Scroll to target section
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                const headerHeight = document.querySelector('.header').offsetHeight;
-                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20; // 20px gap
+                const headerHeight = document.querySelector('.header').offsetHeight; // 70px
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20; // 90px total offset
 
                 // Instant scroll on mobile, smooth on desktop
                 window.scrollTo({
                     top: targetPosition,
                     behavior: window.innerWidth <= 768 ? 'auto' : 'smooth'
                 });
+
+                // Manually set active class after scroll (for consistency)
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
             }
         });
     });
@@ -42,12 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update active link on scroll
     const sections = document.querySelectorAll('section[id]');
     window.addEventListener('scroll', () => {
-        const scrollPosition = window.scrollY + 90; // Matches padding-top
+        const scrollPosition = window.scrollY + 180; // Adjusted to header height only
         sections.forEach(section => {
             const top = section.offsetTop;
             const height = section.offsetHeight;
             const id = section.getAttribute('id');
-            if (scrollPosition >= top && scrollPosition < top + height) {
+            // Check if scroll position is within section bounds
+            if (scrollPosition >= top - 20 && scrollPosition < top + height) { // Adjusted threshold
                 links.forEach(link => {
                     link.classList.remove('active');
                     if (link.getAttribute('href') === `#${id}`) link.classList.add('active');
