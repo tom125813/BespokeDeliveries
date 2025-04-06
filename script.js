@@ -46,19 +46,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update active link on scroll
     const sections = document.querySelectorAll('section[id]');
     window.addEventListener('scroll', () => {
-        const scrollPosition = window.scrollY + 180; // Adjusted to header height only
-        sections.forEach(section => {
-            const top = section.offsetTop;
-            const height = section.offsetHeight;
-            const id = section.getAttribute('id');
-            // Check if scroll position is within section bounds
-            if (scrollPosition >= top - 20 && scrollPosition < top + height) { // Adjusted threshold
-                links.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${id}`) link.classList.add('active');
-                });
-            }
-        });
+        const scrollPosition = window.scrollY + 240; // Adjusted to header height + offset
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const threshold = 100; // Pixels from bottom to consider "at the bottom"
+
+        // Check if scrolled to the bottom (or very close)
+        if (window.scrollY + windowHeight >= documentHeight - threshold) {
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#contact') {
+                    link.classList.add('active');
+                }
+            });
+        } else {
+            // Normal section-based highlighting
+            sections.forEach(section => {
+                const top = section.offsetTop;
+                const height = section.offsetHeight;
+                const id = section.getAttribute('id');
+                if (scrollPosition >= top - 20 && scrollPosition < top + height) {
+                    links.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
     });
 
     // Fade-in animation observer
