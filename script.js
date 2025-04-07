@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to update the active link based on scroll position
     const updateActiveLink = () => {
-        const scrollPosition = window.scrollY + 240;
+        const scrollPosition = window.scrollY + 100; // Offset for section detection
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
-        const threshold = 100;
         const sections = document.querySelectorAll('section[id]');
 
-        if (window.scrollY + windowHeight >= documentHeight - threshold) {
+        // Check if we're exactly at the bottom of the page
+        if (window.scrollY + windowHeight >= documentHeight) {
             links.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href').endsWith('#contact')) {
@@ -27,11 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         } else {
+            // Normal section-based highlighting for all other cases
             sections.forEach(section => {
                 const top = section.offsetTop;
                 const height = section.offsetHeight;
                 const id = section.getAttribute('id');
-                if (scrollPosition >= top - 20 && scrollPosition < top + height) {
+                if (scrollPosition >= top && scrollPosition < top + height) {
                     links.forEach(link => {
                         link.classList.remove('active');
                         if (link.getAttribute('href').endsWith(`#${id}`)) {
@@ -42,6 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     };
+
+    // Set active nav link based on initial hash in URL
+    if (window.location.hash) {
+        const hash = window.location.hash; // e.g., "#contact"
+        links.forEach(link => {
+            link.classList.remove('active'); // Clear any existing active classes
+            if (link.getAttribute('href') === hash || link.getAttribute('href').endsWith(hash)) {
+                link.classList.add('active');
+            }
+        });
+    }
 
     // Handle nav link clicks
     links.forEach(link => {
@@ -71,13 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Calculate scroll position (accounting for fixed header)
                 const headerHeight = document.querySelector('.header').offsetHeight;
-                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
 
                 // Use requestAnimationFrame to ensure DOM updates before scrolling
                 requestAnimationFrame(() => {
                     window.scrollTo({
                         top: targetPosition,
-                        // Always use smooth scrolling on both mobile and desktop
                         behavior: 'smooth'
                     });
 
