@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const documentHeight = document.documentElement.scrollHeight;
         const sections = document.querySelectorAll('section[id]');
 
-        // Check if we're exactly at the bottom of the page
-        if (window.scrollY + windowHeight >= documentHeight) {
+        // Check if the current page is a "delivery" page (e.g., airport-delivery.html)
+        const isDeliveryPage = window.location.pathname.toLowerCase().includes('delivery');
+
+        // Check if we're exactly at the bottom of the page, but only for non-delivery pages (e.g., index.html)
+        if (!isDeliveryPage && window.scrollY + windowHeight >= documentHeight) {
             links.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href').endsWith('#contact')) {
@@ -135,14 +138,31 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('scroll', updateActiveLink);
     }
 
-    // Fade-in animation observer
+    // Fade-in animation observer with cascading delay
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('in-view');
+        // Group entries by their parent to handle siblings together
+        const groupedByParent = entries.reduce((acc, entry) => {
+            const parent = entry.target.parentElement;
+            if (!acc[parent]) {
+                acc[parent] = [];
             }
+            acc[parent].push(entry);
+            return acc;
+        }, {});
+
+        // Process each group of siblings
+        Object.values(groupedByParent).forEach(siblingEntries => {
+            siblingEntries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Add a delay based on the index (e.g., 100ms per element)
+                    setTimeout(() => {
+                        entry.target.classList.add('in-view');
+                    }, index * 100); // 100ms delay per element, adjust as needed
+                }
+            });
         });
     }, { threshold: 0.1 });
 
+    // Observe all fade-in-on-scroll elements
     document.querySelectorAll('.fade-in-on-scroll').forEach(el => observer.observe(el));
 });
