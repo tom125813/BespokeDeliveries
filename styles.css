@@ -3298,6 +3298,7 @@ section[id] {
     }
 
     .cta-buttons {
+        flex-wrap: wrap; /* Prevent wrapping to keep buttons on the same line */
         gap: 0.8rem;
     }
 
@@ -3310,5 +3311,135 @@ section[id] {
         font-size: 0.7rem;
         padding: 0.2rem 0.8rem;
         top: -1.2rem;
+    }
+}
+/* Services */
+.services-section {
+    background: #F5F5F5;
+    padding: 3rem 1rem; /* 1rem padding on left and right, 3rem on top and bottom */
+    text-align: center;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns on desktop */
+    gap: 1.5rem; /* Reduced gap for smaller boxes */
+}
+
+.service-box {
+    background: #fff;
+    border-radius: 6px;
+    padding: 1rem; /* Reduced padding for smaller boxes */
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #333333;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1; /* Ensures square shape */
+    overflow: hidden; /* Prevents content overflow */
+}
+
+.service-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.service-box i {
+    font-size: 3.5rem; /* Bigger icons on desktop */
+    color: #5C4033;
+    margin-bottom: 0.75rem; /* Reduced margin for compactness */
+    height: 3.5rem; /* Fixed height for consistency */
+    width: 3.5rem; /* Fixed width for consistency */
+}
+
+.service-box h3 {
+    font-size: 0.9rem; /* Smaller font for compactness */
+    font-weight: 500;
+    color: #5C4033;
+    margin: 0; /* Remove default margins */
+    text-align: center;
+    line-height: 1.2; /* Ensure text fits well */
+}
+
+.service-arrow {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem; /* Reduced arrow size on desktop */
+    color: #5C4033;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.service-arrow i {
+  font-size: 2rem;
+}
+
+.service-box:hover .service-arrow {
+    opacity: 1;
+    transform: translateX(-40%);
+}
+
+/* Desktop layout (4 columns) */
+@media (min-width: 769px) {
+    .services-grid {
+        grid-template-rows: auto auto;
+    }
+
+    .service-box:nth-child(5),
+    .service-box:nth-child(6),
+    .service-box:nth-child(7),
+    .service-box:nth-child(8) {
+        grid-row: 2;
+    }
+}
+
+/* Mobile layout (2 columns) */
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+        gap: 1rem; /* Slightly smaller gap */
+    }
+
+    .service-box i {
+        font-size: 2.5rem; /* Adjusted for mobile */
+        height: 2.5rem;
+        width: 2.5rem;
+    }
+
+    .service-box h3 {
+        font-size: 0.85rem; /* Slightly smaller on mobile */
+    }
+
+    .service-arrow {
+        font-size: 0.8rem; /* Smaller arrow on mobile */
+        opacity: 0; /* Always visible on mobile */
+        transform: translateX(-50%); /* Centered, no hover animation */
+    }
+}
+
+/* Very small screens (1 column) */
+@media (max-width: 320px) {
+    .services-grid {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+    }
+
+    .service-box i {
+        font-size: 2rem;
+        height: 2rem;
+        width: 2rem;
+    }
+
+    .service-box h3 {
+        font-size: 0.8rem;
+    }
+
+    .service-arrow i {
+        font-size: 0.2rem; /* Even smaller arrow on very small screens */
     }
 }

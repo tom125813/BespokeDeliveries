@@ -11,41 +11,83 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.toggle('nav-open');
     });
 
+    // Function to update the active link based on scroll position
+    const updateActiveLink = () => {
+        const scrollPosition = window.scrollY + 240;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const threshold = 100;
+        const sections = document.querySelectorAll('section[id]');
+
+        if (window.scrollY + windowHeight >= documentHeight - threshold) {
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').endsWith('#contact')) {
+                    link.classList.add('active');
+                }
+            });
+        } else {
+            sections.forEach(section => {
+                const top = section.offsetTop;
+                const height = section.offsetHeight;
+                const id = section.getAttribute('id');
+                if (scrollPosition >= top - 20 && scrollPosition < top + height) {
+                    links.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').endsWith(`#${id}`)) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+    };
+
     // Handle nav link clicks
     links.forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
             const isSamePageLink = href.startsWith('#');
-            const targetId = isSamePageLink ? href : href.split('#')[1]; // Extract #section from ../index.html#section
-            const targetElement = targetId ? document.querySelector(`#${targetId}`) : null;
+            let targetId = isSamePageLink ? href.substring(1) : href.split('#')[1]; // Extract section without the #
 
-            // Close the navbar if it’s open (mobile)
-            if (navLinks.classList.contains('show')) {
-                navLinks.classList.remove('show');
-                menuToggle.classList.remove('active');
-                body.classList.remove('nav-open');
+            // Handle case when there's no hash in the URL
+            if (!targetId && !isSamePageLink) {
+                // Regular navigation to another page without hash
+                return; // Let the default navigation happen
             }
 
-            if (isSamePageLink && targetElement) {
-                // In-page scrolling (e.g., on index.html)
+            const targetElement = targetId ? document.querySelector(`#${targetId}`) : null;
+
+            if (targetElement) {
+                // Prevent default only if we found a target on this page
                 e.preventDefault();
-                const headerHeight = document.querySelector('.header').offsetHeight; // 70px
+
+                // Close the navbar if it's open (mobile)
+                if (navLinks.classList.contains('show')) {
+                    navLinks.classList.remove('show');
+                    menuToggle.classList.remove('active');
+                    body.classList.remove('nav-open');
+                }
+
+                // Calculate scroll position (accounting for fixed header)
+                const headerHeight = document.querySelector('.header').offsetHeight;
                 const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
 
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: window.innerWidth <= 768 ? 'auto' : 'smooth'
-                });
+                // Use requestAnimationFrame to ensure DOM updates before scrolling
+                requestAnimationFrame(() => {
+                    window.scrollTo({
+                        top: targetPosition,
+                        // Always use smooth scrolling on both mobile and desktop
+                        behavior: 'smooth'
+                    });
 
-                // Set active class
-                links.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
+                    // Set active class
+                    links.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                });
             } else if (!isSamePageLink && targetId) {
                 // Cross-page navigation (e.g., from airport.html to index.html#section)
-                // Let default navigation occur, and handle scroll on the target page
-                sessionStorage.setItem('scrollTo', targetId); // Store target for after navigation
-                links.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
+                sessionStorage.setItem('scrollTo', targetId);
             }
         });
     });
@@ -55,55 +97,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (scrollToId) {
         const targetElement = document.querySelector(`#${scrollToId}`);
         if (targetElement) {
-            const headerHeight = document.querySelector('.header').offsetHeight;
-            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-            // Update active class
-            links.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').endsWith(`#${scrollToId}`)) {
-                    link.classList.add('active');
-                }
-            });
-        }
-        sessionStorage.removeItem('scrollTo'); // Clean up
-    }
+            // Wait for the page to fully load before scrolling
+            setTimeout(() => {
+                const headerHeight = document.querySelector('.header').offsetHeight;
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
 
-    // Update active link on scroll (only for index page)
-    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-        const sections = document.querySelectorAll('section[id]');
-        window.addEventListener('scroll', () => {
-            const scrollPosition = window.scrollY + 240;
-            const windowHeight = window.innerHeight;
-            const documentHeight = document.documentElement.scrollHeight;
-            const threshold = 100;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
 
-            if (window.scrollY + windowHeight >= documentHeight - threshold) {
+                // Update active class
                 links.forEach(link => {
                     link.classList.remove('active');
-                    if (link.getAttribute('href').endsWith('#contact')) {
+                    if (link.getAttribute('href').endsWith(`#${scrollToId}`)) {
                         link.classList.add('active');
                     }
                 });
-            } else {
-                sections.forEach(section => {
-                    const top = section.offsetTop;
-                    const height = section.offsetHeight;
-                    const id = section.getAttribute('id');
-                    if (scrollPosition >= top - 20 && scrollPosition < top + height) {
-                        links.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href').endsWith(`#${id}`)) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-            }
-        });
+            }, 100);
+        }
+        sessionStorage.removeItem('scrollTo');
+    }
+
+    // Update active link on scroll (for all pages with sections)
+    if (document.querySelectorAll('section[id]').length > 0) {
+        window.addEventListener('scroll', updateActiveLink);
     }
 
     // Fade-in animation observer
