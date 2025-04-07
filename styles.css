@@ -1710,7 +1710,7 @@ section[id] {
 
 @media (max-width: 1055px) {
     .hero-section {
-        padding: 1rem 0 2.5rem 0;
+        padding: 0rem 0 2.5rem 0;
     }
 
     .hero-inner {
@@ -1737,7 +1737,7 @@ section[id] {
     }
 
     .hero-text h1 {
-        margin-top: 1rem;
+        margin-top: 0rem;
         font-size: 2rem;
     }
 
@@ -2738,6 +2738,7 @@ section[id] {
 .service-description p {
     font-size: 1.2rem;
     margin-bottom: 2rem;
+    margin-top: 3rem;
 }
 
 .service-benefits {
@@ -2824,17 +2825,23 @@ section[id] {
 }
 
 .cta-buttons {
-    display: flex;
+    display: block;
     justify-content: center;
     gap: 1.5rem;
     flex-wrap: wrap;
     margin-top: 2.5rem;
 }
 
+.cta-buttons .cta-wrapper:first-child {
+        margin-right: 1rem;
+}
+
 .cta-wrapper {
     position: relative;
     display: inline-block;
 }
+
+
 
 .cta-btn {
     background: var(--primary-color);
@@ -2903,6 +2910,7 @@ section[id] {
 
     .service-description p {
         font-size: 1rem;
+        margin-top: 3rem;
     }
 
     .service-benefits {
@@ -2968,6 +2976,7 @@ section[id] {
     .service-description p {
         font-size: 0.9rem;
         margin-bottom: 1.5rem;
+        margin-top: 3rem;
     }
 
     .service-benefits {
@@ -3072,15 +3081,19 @@ section[id] {
     bottom: 0.5rem;
     left: 50%;
     transform: translateX(-50%);
-    font-size: var(--font-size-large);
     color: var(--primary-color);
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+
+.service-arrow i {
+    font-size: 2rem;
 }
 
 .service-box:hover .service-arrow {
-    opacity: 1;
-    transform: translateX(-40%);
+    opacity: 0;
+    /*transform: translateX(-40%);*/
+    transform: translateX(-50%);
 }
 
 /* Media Queries for Larger Screens */
@@ -3229,6 +3242,16 @@ html, body {
     padding: 0 1rem;
 }
 
+@media (max-width: 768px) {
+    .hero-inner {
+        padding: 0 2rem;
+    }
+    .hero-text {
+        position: relative;
+        top: -3rem;
+    }
+}
+
 /* Add padding to body to prevent content overlap with fixed header */
 body {
     padding-top: 70px; /* Equal to header height to avoid overlap */
@@ -3260,3 +3283,5 @@ section[id] {
         right: 0;
     }
 }
+
+
