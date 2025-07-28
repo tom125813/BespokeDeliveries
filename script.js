@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.getElementById('navLinks');
     const body = document.body;
     const links = document.querySelectorAll('.nav-links a');
+    const dropdown = document.querySelector('.nav-links .dropdown');
+    const dropdownToggle = document.getElementById('servicesDropdown');
+    const dropdownMenu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
 
     // Toggle mobile nav on hamburger click
     menuToggle.addEventListener('click', () => {
@@ -10,6 +13,59 @@ document.addEventListener('DOMContentLoaded', () => {
         navLinks.classList.toggle('show');
         body.classList.toggle('nav-open');
     });
+
+    // Dropdown logic
+    if (dropdown && dropdownToggle && dropdownMenu) {
+        // Desktop: open on hover/focus, Mobile: open on click
+        let isTouch = false;
+        window.addEventListener('touchstart', () => { isTouch = true; }, { once: true });
+
+        // Open/close on click (mobile/touch)
+        dropdownToggle.addEventListener('click', (e) => {
+            if (window.innerWidth <= 900 || isTouch) {
+                e.preventDefault();
+                const isOpen = dropdown.classList.contains('open');
+                document.querySelectorAll('.nav-links .dropdown.open').forEach(d => d.classList.remove('open'));
+                if (!isOpen) {
+                    dropdown.classList.add('open');
+                    dropdownToggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    dropdown.classList.remove('open');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
+
+        // Keyboard accessibility
+        dropdownToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                dropdown.classList.add('open');
+                dropdownToggle.setAttribute('aria-expanded', 'true');
+                dropdownMenu.querySelector('a').focus();
+            }
+            if (e.key === 'Escape') {
+                dropdown.classList.remove('open');
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+                dropdownToggle.focus();
+            }
+        });
+        dropdownMenu.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdown.classList.remove('open');
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+                dropdownToggle.focus();
+            }
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 
     // Function to update the active link based on scroll position
     const updateActiveLink = () => {
